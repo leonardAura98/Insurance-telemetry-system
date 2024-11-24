@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Calculator</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Premium Calculator</h2>
+        <p>Calculate your insurance premium based on risk factors:</p>
+        <form>
+            <label for="car-value">Car Value (Ksh):</label>
+            <input type="number" id="car-value" placeholder="Enter car value" required>
+            
+            <label for="risk-exposure">Risk Exposure (%)</label>
+            <input type="number" id="risk-exposure" placeholder="Enter risk exposure" required>
+            
+            <button type="button" onclick="calculatePremium()">Calculate Premium</button>
+        </form>
+        <p id="premium-result"></p>
+        <a href="home.html">Back to Dashboard</a>
+    </div>
+    <script>
+        function calculatePremium() {
+            const carValue = document.getElementById("car-value").value;
+            const riskExposure = document.getElementById("risk-exposure").value;
+            if (carValue && riskExposure) {
+                const premium = (carValue * riskExposure / 100).toFixed(2);
+                document.getElementById("premium-result").innerText = `Your insurance premium is: Ksh ${premium}`;
+            } else {
+                alert("Please fill in all fields!");
+            }
+        }
+    </script>
+</body>
+</html>

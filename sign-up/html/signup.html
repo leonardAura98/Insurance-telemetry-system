@@ -3,20 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <div class="container">
-        <h2>Create an Account</h2>
+        <h2>Create Your Account</h2>
         <form>
-            <input type="text" placeholder="Name" required />
-            <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Password" required />
-            <button type="submit">Sign Up</button>
+            <!-- Personal Details -->
+            <fieldset>
+                <legend>Personal Details</legend>
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+
+                <label for="national-id">National ID Number:</label>
+                <input type="number" id="national-id" name="national-id" placeholder="Enter your National ID" required>
+            </fieldset>
+
+            <!-- Login Credentials -->
+            <fieldset>
+                <legend>Account Details</legend>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Choose a username" required>
+
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Choose a password" required>
+            </fieldset>
+
+            <!-- Vehicle Details -->
+            <fieldset>
+                <legend>Vehicle Details</legend>
+                <label for="car-reg">Car Registration Number:</label>
+                <input type="text" id="car-reg" name="car-reg" placeholder="Enter car registration number" required>
+
+                <label for="car-model">Car Make/Model:</label>
+                <input type="text" id="car-model" name="car-model" placeholder="Enter car make/model" required>
+            </fieldset>
+
+            <button type="submit">Register</button>
         </form>
         <p>Already have an account? <a href="login.html">Login</a></p>
     </div>
-    <script src="assets/js/scripts.js"></script>
 </body>
 </html>
+
