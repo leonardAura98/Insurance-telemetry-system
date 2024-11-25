@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Premiums</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="admin_dashboard.html">Dashboard</a></li>
+            <li><a href="admin_users.html">Manage Users</a></li>
+            <li><a href="admin_vehicles.html">Manage Vehicles</a></li>
+            <li><a href="../php/auth.php?action=logout">Logout</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h2>Manage Premiums</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Vehicle Registration</th>
+                    <th>Premium Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="premium-list">
+                <!-- Premium data will be populated here by PHP -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Fetch premiums data dynamically
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch("../php/premium.php?action=fetch_premiums")
+                .then(response => response.json())
+                .then(data => {
+                    let premiumTable = '';
+                    data.forEach(premium => {
+                        premiumTable += `
+                            <tr>
+                                <td>${premium.reg_no}</td>
+                                <td>${premium.premium_amount}</td>
+                                <td><button onclick="deletePremium(${premium.id})">Delete</button></td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('premium-list').innerHTML = premiumTable;
+                })
+                .catch(error => console.log("Error:", error));
+        });
+
+        // Delete premium entry
+        function deletePremium(premiumId) {
+            const data = new FormData();
+            data.append('action', 'delete_premium');
+            data.append('premium_id', premiumId);
+
+            fetch("../php/premium.php", {
+                method: "POST",
+                body: data
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result);
+                location.reload(); // Reload the page to reflect the changes
+            })
+            .catch(error => console.log("Error:", error));
+        }
+    </script>
+</body>
+</html>

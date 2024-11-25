@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Calculator</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Insurance System</h2>
+        <ul>
+            <li><a href="home.html">Dashboard</a></li>
+            <li><a href="driverdetails.html">Driver Details</a></li>
+            <li><a href="vehicledetails.html">Vehicle Details</a></li>
+            <li><a href="premiumcalculator.html">Premium Calculator</a></li>
+            <li><a href="../php/auth.php?action=logout">Logout</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h2>Premium Calculator</h2>
+        <form id="premium-form">
+            <input type="number" id="car-value" placeholder="Enter car value (Ksh)" required>
+            <input type="number" id="risk" placeholder="Risk Exposure (%)" required>
+            <input type="number" id="car-age" placeholder="Car Age (Years)" required>
+            <input type="hidden" id="vehicle-id" value="1"> <!-- Assuming vehicle ID is 1, replace dynamically -->
+            <button type="button" id="calculate">Calculate Premium</button>
+        </form>
+        <p id="premium-result"></p>
+    </div>
+
+    <script src="../assets/js/index.js"></script>
+</body>
+</html>

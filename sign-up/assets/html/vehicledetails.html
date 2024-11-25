@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Insurance System</h2>
+        <ul>
+            <li><a href="home.html">Dashboard</a></li>
+            <li><a href="driverdetails.html">Driver Details</a></li>
+            <li><a href="premiumcalculator.html">Premium Calculator</a></li>
+            <li><a href="../php/auth.php?action=logout">Logout</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h2>Vehicle Details</h2>
+        <form id="vehicle-form">
+            <input type="text" id="car-reg" placeholder="Enter car registration" required>
+            <input type="text" id="car-model" placeholder="Enter car model" required>
+            <input type="hidden" id="owner-id" value="1"> <!-- Owner ID should be dynamically passed -->
+            <button type="button" id="add-vehicle">Add Vehicle</button>
+        </form>
+
+        <div id="vehicle-list">
+            <!-- Vehicle list populated dynamically -->
+        </div>
+    </div>
+
+    <script>
+        // Handle Vehicle Form Submission
+        document.getElementById('add-vehicle').addEventListener('click', function() {
+            const carReg = document.getElementById('car-reg').value;
+            const carModel = document.getElementById('car-model').value;
+            const ownerId = document.getElementById('owner-id').value;
+
+            // Submit the form data to the server
+            const data = new FormData();
+            data.append('action', 'add_vehicle');
+            data.append('car_reg', carReg);
+            data.append('car_model', carModel);
+            data.append('owner_id', ownerId);
+
+            fetch('../php/vehicle.php', {
+                method: 'POST',
+                body: data
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result);
+                // Fetch updated list
+                fetchVehicles();
+            })
+            .catch(error => console.log('Error:', error));
+        });
+
+        // Fetch vehicle data (to be used in any list display)
+        function fetchVehicles() {
+            fetch('../php/vehicle.php?action=fetch_vehicles')
+                .then(response => response.json())
+                .then(data => {
+                    let vehicleList = '';
+                    data.forEach(vehicle => {
+                        vehicleList += `<div>Vehicle: ${vehicle.car_model} | Registration: ${vehicle.reg_no}</div>`;
+                    });
+                    document.getElementById('vehicle-list').innerHTML = vehicleList;
+                })
+                .catch(error => console.log('Error:', error));
+        }
+
+        // Load vehicles on page load
+        fetchVehicles();
+    </script>
+</body>
+</html>
