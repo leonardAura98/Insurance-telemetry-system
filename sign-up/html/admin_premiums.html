@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Premiums</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>Manage Premiums - Admin Panel</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="sidebar">
@@ -13,29 +13,47 @@
             <li><a href="admin_dashboard.html">Dashboard</a></li>
             <li><a href="admin_users.html">Manage Users</a></li>
             <li><a href="admin_vehicles.html">Manage Vehicles</a></li>
+            <li><a href="admin_premiums.html">Manage Premiums</a></li>
             <li><a href="../php/auth.php?action=logout">Logout</a></li>
         </ul>
     </div>
     <div class="container">
         <h2>Manage Premiums</h2>
+
+        <!-- Search and Filter -->
+        <div style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <div style="display: flex; gap: 1rem;">
+                <input type="text" id="search-input" placeholder="Search by registration..." style="flex: 1;">
+                <select id="status-filter">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="expired">Expired</option>
+                </select>
+                <button onclick="filterPremiums()">Filter</button>
+            </div>
+        </div>
+
+        <!-- Premiums Table -->
         <table>
             <thead>
                 <tr>
                     <th>Vehicle Registration</th>
+                    <th>Owner</th>
                     <th>Premium Amount</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="premium-list">
-                <!-- Premium data will be populated here by PHP -->
+                <!-- Premium data will be populated here -->
             </tbody>
         </table>
     </div>
 
     <script>
-        // Fetch premiums data dynamically
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch("../php/premium.php?action=fetch_premiums")
+        function fetchPremiums() {
+            fetch('../php/premium.php?action=fetch_premiums')
                 .then(response => response.json())
                 .then(data => {
                     let premiumTable = '';
@@ -43,33 +61,59 @@
                         premiumTable += `
                             <tr>
                                 <td>${premium.reg_no}</td>
-                                <td>${premium.premium_amount}</td>
-                                <td><button onclick="deletePremium(${premium.id})">Delete</button></td>
+                                <td>${premium.owner_name}</td>
+                                <td>Ksh ${premium.premium_amount}</td>
+                                <td>
+                                    <span style="color: ${premium.status === 'active' ? '#4CAF50' : '#f44336'}">
+                                        ${premium.status}
+                                    </span>
+                                </td>
+                                <td>${premium.due_date}</td>
+                                <td>
+                                    <button onclick="editPremium(${premium.id})" style="background: #2196F3;">Edit</button>
+                                    <button onclick="deletePremium(${premium.id})" style="background: #f44336;">Delete</button>
+                                </td>
                             </tr>
                         `;
                     });
                     document.getElementById('premium-list').innerHTML = premiumTable;
                 })
-                .catch(error => console.log("Error:", error));
-        });
-
-        // Delete premium entry
-        function deletePremium(premiumId) {
-            const data = new FormData();
-            data.append('action', 'delete_premium');
-            data.append('premium_id', premiumId);
-
-            fetch("../php/premium.php", {
-                method: "POST",
-                body: data
-            })
-            .then(response => response.text())
-            .then(result => {
-                alert(result);
-                location.reload(); // Reload the page to reflect the changes
-            })
-            .catch(error => console.log("Error:", error));
+                .catch(error => console.error('Error:', error));
         }
+
+        function filterPremiums() {
+            const searchTerm = document.getElementById('search-input').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            fetch(`../php/premium.php?action=fetch_premiums&search=${searchTerm}&status=${statusFilter}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update table with filtered data
+                    // Similar to fetchPremiums() implementation
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function deletePremium(premiumId) {
+            if (confirm('Are you sure you want to delete this premium record?')) {
+                fetch('../php/premium.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=delete_premium&premium_id=${premiumId}`
+                })
+                .then(response => response.text())
+                .then(result => {
+                    alert(result);
+                    fetchPremiums();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+
+        // Load premiums on page load
+        document.addEventListener('DOMContentLoaded', fetchPremiums);
     </script>
 </body>
 </html>

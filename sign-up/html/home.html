@@ -3,31 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>User Dashboard - Insurance System</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <header>
-        <h1>Vehicle Management System</h1>
-        <nav>
-            <a href="vehicledetails.html">Vehicle Details</a>
-            <a href="driverdetails.html">Driver Details</a>
-            <a href="premiumcalculator.html">Premium Calculator</a>
-            <a href="login.html">Logout</a>
-        </nav>
-    </header>
+    <div class="sidebar">
+        <h2>Insurance System</h2>
+        <ul>
+            <li><a href="home.html">Dashboard</a></li>
+            <li><a href="vehicledetails.html">Vehicle Details</a></li>
+            <li><a href="driverdetails.html">Driver Details</a></li>
+            <li><a href="premiumcalculator.html">Premium Calculator</a></li>
+            <li><a href="../php/auth.php?action=logout">Logout</a></li>
+        </ul>
+    </div>
     <div class="container">
         <h2>Welcome to Your Dashboard</h2>
-        <p>Navigate through the system using the links below:</p>
-        <nav>
-            <ul>
-                <li><a href="driverdetails.html">Driver Details</a></li>
-                <li><a href="vehicledetails.html">Vehicle Details</a></li>
-                <li><a href="vehiclelocator.html">Vehicle Locator</a></li>
-                <li><a href="premiumcalculator.html">Premium Calculator</a></li>
-                <li><a href="help.html">Help/Support</a></li>
-            </ul>
-        </nav>
+        
+        <!-- Quick Stats Section -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0;">
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3>Your Vehicles</h3>
+                <p id="vehicle-count">Loading...</p>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3>Active Premiums</h3>
+                <p id="premium-count">Loading...</p>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3>Next Payment</h3>
+                <p id="next-payment">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Quick Actions</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                <a href="vehicledetails.html" style="text-decoration: none;">
+                    <div style="background: #4CAF50; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
+                        Add New Vehicle
+                    </div>
+                </a>
+                <a href="premiumcalculator.html" style="text-decoration: none;">
+                    <div style="background: #2196F3; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
+                        Calculate Premium
+                    </div>
+                </a>
+                <a href="driverdetails.html" style="text-decoration: none;">
+                    <div style="background: #FF9800; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
+                        Update Profile
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 2rem;">
+            <h3>Recent Activity</h3>
+            <div id="recent-activity" style="margin-top: 1rem;">
+                Loading activities...
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Fetch user dashboard data
+        fetch('../php/user.php?action=get_dashboard_stats')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('vehicle-count').textContent = data.vehicles + ' Registered';
+                document.getElementById('premium-count').textContent = data.premiums + ' Active';
+                document.getElementById('next-payment').textContent = data.next_payment;
+                
+                // Update recent activity
+                let activityHtml = '<ul style="list-style: none;">';
+                data.recent_activity.forEach(activity => {
+                    activityHtml += `<li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                        ${activity.description}
+                        <span style="float: right; color: #666;">${activity.date}</span>
+                    </li>`;
+                });
+                activityHtml += '</ul>';
+                document.getElementById('recent-activity').innerHTML = activityHtml;
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
 </body>
 </html>

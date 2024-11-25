@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="assets\css\style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <div class="sidebar">
         <h2>Admin Panel</h2>
         <ul>
+            <li><a href="admin_dashboard.html">Dashboard</a></li>
             <li><a href="admin_users.html">Manage Users</a></li>
             <li><a href="admin_vehicles.html">Manage Vehicles</a></li>
             <li><a href="admin_premiums.html">Manage Premiums</a></li>
@@ -18,8 +19,32 @@
     </div>
     <div class="container">
         <h2>Admin Dashboard</h2>
-        <p>Welcome to the admin dashboard. Use the links on the sidebar to manage the system.</p>
-        <p>Select an option from the sidebar to manage users, vehicles, and premiums.</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 2rem;">
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3>Total Users</h3>
+                <p id="total-users">Loading...</p>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3>Total Vehicles</h3>
+                <p id="total-vehicles">Loading...</p>
+            </div>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3>Total Premiums</h3>
+                <p id="total-premiums">Loading...</p>
+            </div>
+        </div>
     </div>
+
+    <script>
+        // Fetch dashboard statistics
+        fetch('../php/admin.php?action=get_stats')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('total-users').textContent = data.users;
+                document.getElementById('total-vehicles').textContent = data.vehicles;
+                document.getElementById('total-premiums').textContent = data.premiums;
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
 </body>
 </html>
