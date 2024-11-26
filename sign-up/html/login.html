@@ -10,6 +10,7 @@
     <div class="sidebar">
         <h2>Insurance System</h2>
         <ul>
+            <li><a href="landing.html">Home</a></li>
             <li><a href="signup.html">Sign Up</a></li>
             <li><a href="forgotpass.html">Forgot Password</a></li>
         </ul>
@@ -17,6 +18,9 @@
     <div class="container">
         <form action="../php/auth.php" method="POST">
             <h2>Login</h2>
+            <?php if(isset($_GET['error']) && $_GET['error'] === 'true'): ?>
+                <p style="color: red; text-align: center;">Invalid credentials</p>
+            <?php endif; ?>
             <input type="hidden" name="action" value="login">
             <input type="text" name="usernameOrEmail" placeholder="Username or Email" required>
             <input type="password" name="password" placeholder="Password" required>
@@ -26,5 +30,6 @@
             </p>
         </form>
     </div>
+    <script src="../js/feedback.js"></script>
 </body>
 </html>

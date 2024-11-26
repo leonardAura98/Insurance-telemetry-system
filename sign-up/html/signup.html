@@ -10,27 +10,37 @@
     <div class="sidebar">
         <h2>Insurance System</h2>
         <ul>
+            <li><a href="landing.html">Home</a></li>
             <li><a href="login.html">Login</a></li>
             <li><a href="forgotpass.html">Forgot Password</a></li>
         </ul>
     </div>
     <div class="container">
-        <form action="../php/auth.php" method="POST">
-            <h2>Create Account</h2>
+        <form action="../php/auth.php" method="POST" enctype="multipart/form-data">
+            <h2>Sign Up</h2>
             <input type="hidden" name="action" value="signup">
-            <input type="text" name="fullname" placeholder="Full Name" required>
-            <input type="email" name="email" placeholder="Email Address" required>
             <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
             <input type="password" name="password" placeholder="Password" required>
             <input type="password" name="confirm_password" placeholder="Confirm Password" required>
             
-            <h3 style="margin-top: 1rem;">Vehicle Information</h3>
-            <input type="text" name="car_reg" placeholder="Vehicle Registration Number" required>
-            <input type="text" name="car_model" placeholder="Vehicle Make and Model" required>
-            <input type="number" name="car_year" placeholder="Vehicle Year" required>
-            <input type="text" name="car_type" placeholder="Vehicle Type" required>
+            <!-- New fields -->
+            <input type="text" name="id_number" placeholder="ID Number" required>
+            <input type="text" name="area_operation" placeholder="Area of Operation" required>
             
-            <button type="submit">Create Account</button>
+            <!-- ID Photo upload -->
+            <label for="id_photo">Upload ID Photo:</label>
+            <input type="file" name="id_photo" id="id_photo" accept="image/*" required>
+            
+            <!-- Location capture -->
+            <div id="location-section">
+                <button type="button" onclick="getLocation()">Get Current Location</button>
+                <input type="hidden" name="latitude" id="latitude">
+                <input type="hidden" name="longitude" id="longitude">
+                <p id="location-status"></p>
+            </div>
+
+            <button type="submit">Sign Up</button>
             <p style="text-align: center; margin-top: 1rem;">
                 Already have an account? <a href="login.html">Login</a>
             </p>
@@ -38,15 +48,30 @@
     </div>
 
     <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const password = this.querySelector('input[name="password"]').value;
-            const confirmPassword = this.querySelector('input[name="confirm_password"]').value;
+        function getLocation() {
+            const status = document.getElementById('location-status');
             
-            if (password !== confirmPassword) {
-                e.preventDefault();
-                alert('Passwords do not match!');
+            if (!navigator.geolocation) {
+                status.textContent = 'Geolocation is not supported by your browser';
+                return;
             }
-        });
+
+            status.textContent = 'Locating...';
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('latitude').value = position.coords.latitude;
+                    document.getElementById('longitude').value = position.coords.longitude;
+                    status.textContent = 'Location captured successfully!';
+                    status.style.color = 'green';
+                },
+                () => {
+                    status.textContent = 'Unable to retrieve your location';
+                    status.style.color = 'red';
+                }
+            );
+        }
     </script>
+    <script src="../js/feedback.js"></script>
 </body>
 </html>
