@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Admin Panel</h2>
+    <div class="sidebar" id="sidebar">
+        <h2><a href="landing.html">Admin Panel</a></h2>
         <ul>
             <li><a href="admin_dashboard.html">Dashboard</a></li>
             <li><a href="admin_users.html">Manage Users</a></li>
@@ -114,6 +114,14 @@
 
         // Load premiums on page load
         document.addEventListener('DOMContentLoaded', fetchPremiums);
+
+        // Toggle sidebar visibility
+        document.getElementById('sidebar').addEventListener('mouseover', function() {
+            this.style.width = '250px';
+        });
+        document.getElementById('sidebar').addEventListener('mouseout', function() {
+            this.style.width = '60px';
+        });
     </script>
 </body>
 </html>

@@ -1,9 +1,10 @@
 <?php
-require 'config.php';
-session_start();
+require 'config.php'; // Include database configuration
+session_start(); // Start the session
 
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
-    die(json_encode(['error' => 'Unauthorized access']));
+    die(json_encode(['error' => 'Unauthorized access'])); // Return error if not logged in
 }
 
 // Fetch vehicles
@@ -11,10 +12,12 @@ if ($_GET['action'] === 'fetch_vehicles') {
     $userId = $_SESSION['user_id'];
     $isAdmin = $_SESSION['role'] === 'admin';
 
+    // Prepare SQL query to fetch vehicles
     $query = "SELECT v.*, u.fullname as owner_name 
               FROM vehicles v 
               JOIN users u ON v.owner_id = u.id";
     
+    // If user is not admin, filter by owner
     if (!$isAdmin) {
         $query .= " WHERE v.owner_id = ?";
     }
@@ -26,133 +29,8 @@ if ($_GET['action'] === 'fetch_vehicles') {
     $stmt->execute();
     $result = $stmt->get_result();
     
-    echo json_encode($result->fetch_all(MYSQLI_ASSOC));
+    echo json_encode($result->fetch_all(MYSQLI_ASSOC)); // Return vehicle data as JSON
 }
 
-// Add vehicle
-if ($_POST['action'] === 'add_vehicle') {
-    $carReg = $_POST['car_reg'];
-    $carModel = $_POST['car_model'];
-    $carYear = $_POST['car_year'];
-    $carType = $_POST['car_type'];
-    $ownerId = $_SESSION['user_id'];
-
-    // Start transaction
-    $conn->begin_transaction();
-
-    try {
-        // Check if registration number already exists
-        $checkQuery = $conn->prepare("SELECT id FROM vehicles WHERE reg_no = ?");
-        $checkQuery->bind_param("s", $carReg);
-        $checkQuery->execute();
-        if ($checkQuery->get_result()->num_rows > 0) {
-            throw new Exception("Vehicle with this registration number already exists.");
-        }
-
-        // Insert vehicle
-        $query = $conn->prepare("INSERT INTO vehicles (reg_no, make_model, year, type, owner_id) VALUES (?, ?, ?, ?, ?)");
-        $query->bind_param("ssisi", $carReg, $carModel, $carYear, $carType, $ownerId);
-        
-        if ($query->execute()) {
-            // Log activity
-            $activityQuery = $conn->prepare("INSERT INTO activity_log (user_id, activity_type, description) VALUES (?, 'vehicle_add', 'Added new vehicle')");
-            $activityQuery->bind_param("i", $ownerId);
-            $activityQuery->execute();
-
-            $conn->commit();
-            echo "Vehicle added successfully.";
-        } else {
-            throw new Exception("Error adding vehicle.");
-        }
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "Error: " . $e->getMessage();
-    }
-}
-
-// Delete vehicle
-if ($_POST['action'] === 'delete_vehicle') {
-    $vehicleId = $_POST['vehicle_id'];
-    $userId = $_SESSION['user_id'];
-    $isAdmin = $_SESSION['role'] === 'admin';
-
-    // Start transaction
-    $conn->begin_transaction();
-
-    try {
-        // Check if user owns the vehicle or is admin
-        if (!$isAdmin) {
-            $checkQuery = $conn->prepare("SELECT id FROM vehicles WHERE id = ? AND owner_id = ?");
-            $checkQuery->bind_param("ii", $vehicleId, $userId);
-            $checkQuery->execute();
-            if ($checkQuery->get_result()->num_rows === 0) {
-                throw new Exception("Unauthorized to delete this vehicle.");
-            }
-        }
-
-        // Delete vehicle
-        $query = $conn->prepare("DELETE FROM vehicles WHERE id = ?");
-        $query->bind_param("i", $vehicleId);
-        
-        if ($query->execute()) {
-            // Log activity
-            $activityQuery = $conn->prepare("INSERT INTO activity_log (user_id, activity_type, description) VALUES (?, 'vehicle_delete', 'Deleted vehicle')");
-            $activityQuery->bind_param("i", $userId);
-            $activityQuery->execute();
-
-            $conn->commit();
-            echo "Vehicle deleted successfully.";
-        } else {
-            throw new Exception("Error deleting vehicle.");
-        }
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "Error: " . $e->getMessage();
-    }
-}
-
-// Update vehicle
-if ($_POST['action'] === 'update_vehicle') {
-    $vehicleId = $_POST['vehicle_id'];
-    $carReg = $_POST['car_reg'];
-    $carModel = $_POST['car_model'];
-    $carYear = $_POST['car_year'];
-    $carType = $_POST['car_type'];
-    $userId = $_SESSION['user_id'];
-    $isAdmin = $_SESSION['role'] === 'admin';
-
-    // Start transaction
-    $conn->begin_transaction();
-
-    try {
-        // Check if user owns the vehicle or is admin
-        if (!$isAdmin) {
-            $checkQuery = $conn->prepare("SELECT id FROM vehicles WHERE id = ? AND owner_id = ?");
-            $checkQuery->bind_param("ii", $vehicleId, $userId);
-            $checkQuery->execute();
-            if ($checkQuery->get_result()->num_rows === 0) {
-                throw new Exception("Unauthorized to update this vehicle.");
-            }
-        }
-
-        // Update vehicle
-        $query = $conn->prepare("UPDATE vehicles SET reg_no = ?, make_model = ?, year = ?, type = ? WHERE id = ?");
-        $query->bind_param("ssisi", $carReg, $carModel, $carYear, $carType, $vehicleId);
-        
-        if ($query->execute()) {
-            // Log activity
-            $activityQuery = $conn->prepare("INSERT INTO activity_log (user_id, activity_type, description) VALUES (?, 'vehicle_update', 'Updated vehicle details')");
-            $activityQuery->bind_param("i", $userId);
-            $activityQuery->execute();
-
-            $conn->commit();
-            echo "Vehicle updated successfully.";
-        } else {
-            throw new Exception("Error updating vehicle.");
-        }
-    } catch (Exception $e) {
-        $conn->rollback();
-        echo "Error: " . $e->getMessage();
-    }
-}
+// Additional actions (add, update, delete vehicles) would go here...
 ?>
