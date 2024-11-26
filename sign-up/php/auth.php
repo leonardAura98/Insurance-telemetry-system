@@ -51,5 +51,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     
     session_destroy(); // Destroy the session
     header("Location: ../html/login.html"); // Redirect to login page
+    exit(); // Ensure no further code is executed
 }
 ?>
