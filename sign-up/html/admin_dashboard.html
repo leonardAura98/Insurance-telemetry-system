@@ -15,7 +15,7 @@
             <li><a href="admin_users.html">Manage Users</a></li>
             <li><a href="admin_vehicles.html">Manage Vehicles</a></li>
             <li><a href="admin_premiums.html">Manage Premiums</a></li>
-            <li><a href="management_signin.html">Logout</a></li> <!-- Updated this line -->
+            <li><a href="management_signin.html">Logout</a></li>
         </ul>
     </div>
     <div class="container">
@@ -36,14 +36,20 @@
         </div>
     </div>
 
-    <script>
-        // Fetch dashboard statistics
+    <script>// Fetch dashboard statistics
         fetch('../php/admin.php?action=get_stats')
             .then(response => response.json())
             .then(data => {
                 document.getElementById('total-users').textContent = data.users;
                 document.getElementById('total-vehicles').textContent = data.vehicles;
                 document.getElementById('total-premiums').textContent = data.premiums;
+                
+                // Optionally handle recent activity
+                let activityHtml = '';
+                data.recent_activity.forEach(activity => {
+                    activityHtml += `<li>${activity.description} - ${activity.created_at}</li>`;
+                });
+                document.getElementById('recent-activity').innerHTML = activityHtml;
             })
             .catch(error => console.error('Error:', error));
     </script>

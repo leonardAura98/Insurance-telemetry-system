@@ -2,12 +2,7 @@
 require 'config.php'; // Include database configuration
 session_start(); // Start the session
 
-// Function to generate a secure token
-function generateToken() {
-    return bin2hex(random_bytes(32));
-}
-
-// Handle POST requests for login, signup, and password reset
+// Handle POST requests for login
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'];
 
@@ -35,20 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Redirect based on user role
             if ($user['role'] === 'admin') {
-                header("Location: ../html/admin_dashboard.html");
+                header("Location: ../html/admin_dashboard.html"); // Redirect to admin dashboard
             } else {
-                header("Location: ../html/home.html");
+                header("Location: ../html/home.html"); // Redirect to user home
             }
         } else {
             echo "Invalid login credentials.";
         }
     }
-
-    // Additional actions (signup, forgot password) would go here...
 }
 
 // Logout
-if ($_GET['action'] === 'logout') {
+if (isset($_GET['action']) && $_GET['action'] === 'logout') {
     if (isset($_SESSION['user_id'])) {
         // Log activity before destroying session
         $activityQuery = $conn->prepare("INSERT INTO activity_log (user_id, activity_type, description) VALUES (?, 'logout', 'User logged out')");
