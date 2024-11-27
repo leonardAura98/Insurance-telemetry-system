@@ -1,10 +1,11 @@
 <?php
 session_start();
 require_once 'config.php';
-require_once 'db.php';
+require_once 'db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($_POST['action'] === 'signup') {
+        // Handle signup
         $username = $_POST['username'];
         $email = $_POST['email'];
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
@@ -24,33 +25,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Insert user into database
-        $sql = "INSERT INTO users (username, email, password, id_number, area_operation, id_photo_path, latitude, longitude) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        // Insert into database
+        $sql = "INSERT INTO users (username, email, password, id_number, area_operation, id_photo_path) 
+                VALUES (?, ?, ?, ?, ?, ?)";
         
         try {
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssssss", 
+            $stmt->bind_param("ssssss", 
                 $username, 
                 $email, 
                 $password, 
                 $id_number, 
                 $area_operation, 
-                $id_photo_path,
-                $_POST['latitude'],
-                $_POST['longitude']
+                $id_photo_path
             );
             
             if ($stmt->execute()) {
-                // Log the activity
-                $user_id = $conn->insert_id;
-                $activity_sql = "INSERT INTO activity_log (user_id, activity_type, description) 
-                               VALUES (?, 'signup', 'New user registration')";
-                $activity_stmt = $conn->prepare($activity_sql);
-                $activity_stmt->bind_param("i", $user_id);
-                $activity_stmt->execute();
-                
-                // Redirect to login page with success message
                 header('Location: ../html/login.html?message=signup_success');
                 exit();
             } else {

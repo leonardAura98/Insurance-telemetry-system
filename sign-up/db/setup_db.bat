@@ -1,6 +1,5 @@
 @echo off
 echo Setting up insurance system database...
-mysql -u root -p < create_database.sql
-mysql -u root -p insurance_system < sample_data.sql
+mysql -u root -p < setup.sql
 echo Database setup complete!
-pause 
+pause
