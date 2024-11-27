@@ -7,16 +7,19 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
-        <h2><a href="landing.html">Admin Panel</a></h2>
-        <ul>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>Admin Panel</h1>
+        </div>
+        <ul class="nav-links">
             <li><a href="admin_dashboard.html">Dashboard</a></li>
-            <li><a href="admin_users.html">Manage Users</a></li>
-            <li><a href="admin_vehicles.html">Manage Vehicles</a></li>
-            <li><a href="admin_premiums.html">Manage Premiums</a></li>
+            <li><a href="admin_users.html" class="active">Users</a></li>
+            <li><a href="admin_vehicles.html">Vehicles</a></li>
+            <li><a href="admin_premiums.html">Premiums</a></li>
             <li><a href="management_signin.html">Logout</a></li>
         </ul>
-    </div>
+    </nav>
+
     <div class="container">
         <h2>Manage Users</h2>
 
@@ -53,28 +56,43 @@
 
     <script>
         function fetchUsers() {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = '<tr><td colspan="6">Loading users...</td></tr>';
+            
             fetch('../php/admin.php?action=fetch_users')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     let usersHtml = '';
-                    data.forEach(user => {
-                        usersHtml += `
-                            <tr>
-                                <td>${user.id}</td>
-                                <td>${user.fullname}</td>
-                                <td>${user.email}</td>
-                                <td>${user.username}</td>
-                                <td>${user.role}</td>
-                                <td>
-                                    <button onclick="editUser(${user.id})" style="background: #2196F3;">Edit</button>
-                                    <button onclick="deleteUser(${user.id})" style="background: #f44336;">Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('users-list').innerHTML = usersHtml;
+                    if (data.length === 0) {
+                        usersHtml = '<tr><td colspan="6">No users found</td></tr>';
+                    } else {
+                        data.forEach(user => {
+                            usersHtml += `
+                                <tr>
+                                    <td>${user.id}</td>
+                                    <td>${user.username}</td>
+                                    <td>${user.email}</td>
+                                    <td>${user.id_number}</td>
+                                    <td>${user.role}</td>
+                                    <td>
+                                        <button onclick="editUser(${user.id})" class="btn-edit">Edit</button>
+                                        <button onclick="deleteUser(${user.id})" class="btn-delete">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                    usersList.innerHTML = usersHtml;
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    usersList.innerHTML = '<tr><td colspan="6">Error loading users</td></tr>';
+                });
         }
 
         function filterUsers() {
@@ -118,6 +136,18 @@
         document.getElementById('sidebar').addEventListener('mouseout', function() {
             this.style.width = '60px';
         });
+
+        function handleLogout() {
+            fetch('../php/logout.php')
+                .then(response => response.json())
+                .then(data => {
+                    showMessage('success', 'Logged out successfully');
+                    setTimeout(() => {
+                        window.location.href = 'management_signin.html';
+                    }, 1500);
+                })
+                .catch(error => console.error('Error:', error));
+        }
     </script>
     <script src="../js/feedback.js"></script>
 </body>

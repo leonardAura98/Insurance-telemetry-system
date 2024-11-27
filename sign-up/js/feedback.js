@@ -1,50 +1,73 @@
-function showMessage(type, message) {
-    const messageDiv = document.getElementById('message-container');
-    if (!messageDiv) {
-        const div = document.createElement('div');
-        div.id = 'message-container';
-        document.querySelector('.container').prepend(div);
+class FeedbackSystem {
+    constructor() {
+        this.container = this.createContainer();
+        this.messageQueue = [];
+        this.isProcessing = false;
     }
-    
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type}`;
-    alertDiv.textContent = message;
-    
-    document.getElementById('message-container').appendChild(alertDiv);
-    
-    setTimeout(() => {
+
+    createContainer() {
+        const container = document.createElement('div');
+        container.className = 'message-container';
+        document.body.appendChild(container);
+        return container;
+    }
+
+    showMessage(type, message, duration = 5000) {
+        this.messageQueue.push({ type, message, duration });
+        if (!this.isProcessing) {
+            this.processQueue();
+        }
+    }
+
+    async processQueue() {
+        if (this.messageQueue.length === 0) {
+            this.isProcessing = false;
+            return;
+        }
+
+        this.isProcessing = true;
+        const { type, message, duration } = this.messageQueue.shift();
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+
+        this.container.appendChild(alertDiv);
+
+        await new Promise(resolve => setTimeout(resolve, duration));
+        alertDiv.style.animation = 'slideOut 0.5s ease-in forwards';
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         alertDiv.remove();
-    }, 5000);
-}
-
-// Parse URL parameters for error messages
-function handleUrlParams() {
-    const urlParams = new URLSearchParams(window.location.search);
-    
-    const errorMessages = {
-        'passwords_mismatch': 'Passwords do not match',
-        'file_upload': 'Error uploading ID photo',
-        'user_exists': 'Username or email already exists',
-        'database': 'Database error occurred',
-        'server': 'Server error occurred',
-        'email_not_found': 'Email not found',
-        'email_sent': 'Password reset email sent'
-    };
-    
-    if (urlParams.has('error')) {
-        const error = urlParams.get('error');
-        if (errorMessages[error]) {
-            showMessage('error', errorMessages[error]);
-        }
+        this.processQueue();
     }
-    
-    if (urlParams.has('status')) {
-        const status = urlParams.get('status');
-        if (errorMessages[status]) {
-            showMessage('success', errorMessages[status]);
+
+    handleUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        const messageMap = {
+            'signup_success': { type: 'success', message: 'Registration successful! Please login' },
+            'login_required': { type: 'warning', message: 'Please login to continue' },
+            'invalid_credentials': { type: 'error', message: 'Invalid username or password' },
+            'user_exists': { type: 'error', message: 'Username or email already exists' },
+            'passwords_mismatch': { type: 'error', message: 'Passwords do not match' },
+            'file_upload_error': { type: 'error', message: 'Error uploading file' },
+            'claim_submitted': { type: 'success', message: 'Claim submitted successfully' },
+            'submission_failed': { type: 'error', message: 'Failed to submit claim' },
+            'logout_success': { type: 'success', message: 'Logged out successfully' }
+        };
+
+        for (const [param, value] of urlParams.entries()) {
+            if (messageMap[value]) {
+                this.showMessage(messageMap[value].type, messageMap[value].message);
+            }
         }
     }
 }
 
-// Call this when the page loads
-document.addEventListener('DOMContentLoaded', handleUrlParams); 
+// Initialize feedback system
+const feedback = new FeedbackSystem();
+document.addEventListener('DOMContentLoaded', () => feedback.handleUrlParams());
+
+// Export for global use
+window.showMessage = (type, message) => feedback.showMessage(type, message); 

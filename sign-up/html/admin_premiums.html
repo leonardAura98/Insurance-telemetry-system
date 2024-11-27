@@ -7,23 +7,26 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
-        <h2><a href="landing.html">Admin Panel</a></h2>
-        <ul>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>Admin Panel</h1>
+        </div>
+        <ul class="nav-links">
             <li><a href="admin_dashboard.html">Dashboard</a></li>
-            <li><a href="admin_users.html">Manage Users</a></li>
-            <li><a href="admin_vehicles.html">Manage Vehicles</a></li>
-            <li><a href="admin_premiums.html">Manage Premiums</a></li>
+            <li><a href="admin_users.html">Users</a></li>
+            <li><a href="admin_vehicles.html">Vehicles</a></li>
+            <li><a href="admin_premiums.html" class="active">Premiums</a></li>
             <li><a href="management_signin.html">Logout</a></li>
         </ul>
-    </div>
+    </nav>
+
     <div class="container">
         <h2>Manage Premiums</h2>
 
         <!-- Search and Filter -->
-        <div style="background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <div style="display: flex; gap: 1rem;">
-                <input type="text" id="search-input" placeholder="Search by registration..." style="flex: 1;">
+        <div class="search-filter">
+            <div class="filter-group">
+                <input type="text" id="search-input" placeholder="Search by registration...">
                 <select id="status-filter">
                     <option value="">All Status</option>
                     <option value="active">Active</option>
@@ -52,48 +55,103 @@
     </div>
 
     <script>
+        // Function to fetch premiums
         function fetchPremiums() {
+            const premiumList = document.getElementById('premium-list');
+            
+            // Show loading state
+            premiumList.innerHTML = '<tr><td colspan="6">Loading premiums...</td></tr>';
+            
             fetch('../php/premium.php?action=fetch_premiums')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     let premiumTable = '';
-                    data.forEach(premium => {
-                        premiumTable += `
-                            <tr>
-                                <td>${premium.reg_no}</td>
-                                <td>${premium.owner_name}</td>
-                                <td>Ksh ${premium.premium_amount}</td>
-                                <td>
-                                    <span style="color: ${premium.status === 'active' ? '#4CAF50' : '#f44336'}">
-                                        ${premium.status}
-                                    </span>
-                                </td>
-                                <td>${premium.due_date}</td>
-                                <td>
-                                    <button onclick="editPremium(${premium.id})" style="background: #2196F3;">Edit</button>
-                                    <button onclick="deletePremium(${premium.id})" style="background: #f44336;">Delete</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('premium-list').innerHTML = premiumTable;
+                    if (data.length === 0) {
+                        premiumTable = '<tr><td colspan="6">No premiums found</td></tr>';
+                    } else {
+                        data.forEach(premium => {
+                            premiumTable += `
+                                <tr>
+                                    <td>${premium.reg_no}</td>
+                                    <td>${premium.owner_name}</td>
+                                    <td>Ksh ${premium.premium_amount}</td>
+                                    <td>
+                                        <span class="status-${premium.status.toLowerCase()}">
+                                            ${premium.status}
+                                        </span>
+                                    </td>
+                                    <td>${premium.due_date}</td>
+                                    <td>
+                                        <button onclick="editPremium(${premium.id})" class="btn-edit">Edit</button>
+                                        <button onclick="deletePremium(${premium.id})" class="btn-delete">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                    premiumList.innerHTML = premiumTable;
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    premiumList.innerHTML = '<tr><td colspan="6">Error loading premiums</td></tr>';
+                });
         }
 
+        // Function to filter premiums
         function filterPremiums() {
             const searchTerm = document.getElementById('search-input').value;
             const statusFilter = document.getElementById('status-filter').value;
             
-            fetch(`../php/premium.php?action=fetch_premiums&search=${searchTerm}&status=${statusFilter}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Update table with filtered data
-                    // Similar to fetchPremiums() implementation
+            const premiumList = document.getElementById('premium-list');
+            premiumList.innerHTML = '<tr><td colspan="6">Loading filtered results...</td></tr>';
+
+            fetch(`../php/premium.php?action=fetch_premiums&search=${encodeURIComponent(searchTerm)}&status=${encodeURIComponent(statusFilter)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
                 })
-                .catch(error => console.error('Error:', error));
+                .then(data => {
+                    let premiumTable = '';
+                    if (data.length === 0) {
+                        premiumTable = '<tr><td colspan="6">No matching premiums found</td></tr>';
+                    } else {
+                        // Same forEach loop as in fetchPremiums
+                        data.forEach(premium => {
+                            premiumTable += `
+                                <tr>
+                                    <td>${premium.reg_no}</td>
+                                    <td>${premium.owner_name}</td>
+                                    <td>Ksh ${premium.premium_amount}</td>
+                                    <td>
+                                        <span class="status-${premium.status.toLowerCase()}">
+                                            ${premium.status}
+                                        </span>
+                                    </td>
+                                    <td>${premium.due_date}</td>
+                                    <td>
+                                        <button onclick="editPremium(${premium.id})" class="btn-edit">Edit</button>
+                                        <button onclick="deletePremium(${premium.id})" class="btn-delete">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                    premiumList.innerHTML = premiumTable;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    premiumList.innerHTML = '<tr><td colspan="6">Error filtering premiums</td></tr>';
+                });
         }
 
+        // Function to delete premium
         function deletePremium(premiumId) {
             if (confirm('Are you sure you want to delete this premium record?')) {
                 fetch('../php/premium.php', {
@@ -105,23 +163,18 @@
                 })
                 .then(response => response.text())
                 .then(result => {
-                    alert(result);
+                    showMessage('success', result);
                     fetchPremiums();
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    showMessage('error', 'Failed to delete premium');
+                });
             }
         }
 
-        // Load premiums on page load
+        // Load premiums when the page loads
         document.addEventListener('DOMContentLoaded', fetchPremiums);
-
-        // Toggle sidebar visibility
-        document.getElementById('sidebar').addEventListener('mouseover', function() {
-            this.style.width = '250px';
-        });
-        document.getElementById('sidebar').addEventListener('mouseout', function() {
-            this.style.width = '60px';
-        });
     </script>
     <script src="../js/feedback.js"></script>
 </body>

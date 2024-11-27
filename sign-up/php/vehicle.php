@@ -1,36 +1,59 @@
 <?php
-require 'config.php'; // Include database configuration
-session_start(); // Start the session
+session_start();
+require_once 'db_connect.php';
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    die(json_encode(['error' => 'Unauthorized access'])); // Return error if not logged in
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    switch ($action) {
+        case 'add_vehicle':
+            handleAddVehicle($conn);
+            break;
+        case 'update_vehicle':
+            handleUpdateVehicle($conn);
+            break;
+        case 'delete_vehicle':
+            handleDeleteVehicle($conn);
+            break;
+        default:
+            header('Location: ../html/vehicledetails.html?error=invalid_action');
+            exit();
+    }
 }
 
-// Fetch vehicles
-if ($_GET['action'] === 'fetch_vehicles') {
-    $userId = $_SESSION['user_id'];
-    $isAdmin = $_SESSION['role'] === 'admin';
-
-    // Prepare SQL query to fetch vehicles
-    $query = "SELECT v.*, u.fullname as owner_name 
-              FROM vehicles v 
-              JOIN users u ON v.owner_id = u.id";
-    
-    // If user is not admin, filter by owner
-    if (!$isAdmin) {
-        $query .= " WHERE v.owner_id = ?";
+function handleAddVehicle($conn) {
+    // Validate user is logged in
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: ../html/login.html?error=login_required');
+        exit();
     }
 
-    $stmt = $conn->prepare($query);
-    if (!$isAdmin) {
-        $stmt->bind_param("i", $userId);
+    $user_id = $_SESSION['user_id'];
+    $make = filter_input(INPUT_POST, 'make', FILTER_SANITIZE_STRING);
+    $model = filter_input(INPUT_POST, 'model', FILTER_SANITIZE_STRING);
+    $year = filter_input(INPUT_POST, 'year', FILTER_VALIDATE_INT);
+    $registration = filter_input(INPUT_POST, 'registration', FILTER_SANITIZE_STRING);
+
+    try {
+        $stmt = $conn->prepare("INSERT INTO vehicles (user_id, make, model, year, registration) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("issis", $user_id, $make, $model, $year, $registration);
+        
+        if ($stmt->execute()) {
+            header('Location: ../html/dashboard.html?status=vehicle_added');
+        } else {
+            header('Location: ../html/vehicledetails.html?error=database_error');
+        }
+    } catch (Exception $e) {
+        error_log("Error adding vehicle: " . $e->getMessage());
+        header('Location: ../html/vehicledetails.html?error=server_error');
     }
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    echo json_encode($result->fetch_all(MYSQLI_ASSOC)); // Return vehicle data as JSON
 }
 
-// Additional actions (add, update, delete vehicles) would go here...
+function handleUpdateVehicle($conn) {
+    // Implementation for updating vehicle details
+}
+
+function handleDeleteVehicle($conn) {
+    // Implementation for deleting vehicle
+}
 ?>

@@ -1,42 +1,26 @@
 <?php
-require 'config.php'; // Include database configuration
 session_start();
+require_once 'config.php';
+require_once 'db.php';
 
-// Check if user is admin
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    die(json_encode(['error' => 'Unauthorized access']));
+// Check if user is logged in and is admin
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'Unauthorized']);
+    exit();
 }
 
-// Get dashboard statistics
-if (isset($_GET['action']) && $_GET['action'] === 'get_stats') {
-    $stats = [
-        'users' => 0,
-        'vehicles' => 0,
-        'premiums' => 0,
-        'recent_activity' => []
-    ];
-
-    // Get user count
-    $result = $conn->query("SELECT COUNT(*) as count FROM users WHERE role = 'user'");
-    $stats['users'] = $result->fetch_assoc()['count'];
-
-    // Get vehicle count
-    $result = $conn->query("SELECT COUNT(*) as count FROM vehicles");
-    $stats['vehicles'] = $result->fetch_assoc()['count'];
-
-    // Get active premiums count
-    $result = $conn->query("SELECT COUNT(*) as count FROM premiums WHERE status = 'active'");
-    $stats['premiums'] = $result->fetch_assoc()['count'];
-
-    // Get recent activity (optional)
-    $result = $conn->query("SELECT * FROM activity_log ORDER BY created_at DESC LIMIT 5");
-    $stats['recent_activity'] = $result->fetch_all(MYSQLI_ASSOC);
-
-    // Return JSON response
-    echo json_encode($stats);
-    exit; // Exit after sending the response
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && $_GET['action'] === 'fetch_users') {
+    $sql = "SELECT id, username, email, id_number, role, created_at FROM users ORDER BY created_at DESC";
+    $result = $conn->query($sql);
+    
+    $users = [];
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
+    
+    header('Content-Type: application/json');
+    echo json_encode($users);
+    exit();
 }
-
-// Other actions (like fetching users, etc.) can go here...
-
 ?>

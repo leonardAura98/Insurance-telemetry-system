@@ -7,29 +7,57 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Insurance System</h2>
-        <ul>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>Telemetry Insurance</h1>
+        </div>
+        <ul class="nav-links">
             <li><a href="landing.html">Home</a></li>
             <li><a href="signup.html">Sign Up</a></li>
-            <li><a href="forgotpass.html">Forgot Password</a></li>
+            <li><a href="login.html" class="active">Login</a></li>
         </ul>
-    </div>
+    </nav>
+
     <div class="container">
-        <form action="../php/auth.php" method="POST">
-            <h2>Login</h2>
-            <?php if(isset($_GET['error']) && $_GET['error'] === 'true'): ?>
-                <p style="color: red; text-align: center;">Invalid credentials</p>
-            <?php endif; ?>
-            <input type="hidden" name="action" value="login">
-            <input type="text" name="usernameOrEmail" placeholder="Username or Email" required>
-            <input type="password" name="password" placeholder="Password" required>
+        <form action="../php/login.php" method="POST" id="login-form">
+            <h2>Login to Your Account</h2>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+
             <button type="submit">Login</button>
-            <p style="text-align: center; margin-top: 1rem;">
-                Don't have an account? <a href="signup.html">Sign Up</a>
-            </p>
+            
+            <div class="form-links">
+                <a href="forgot-password.html">Forgot Password?</a>
+                <span>|</span>
+                <a href="signup.html">Create Account</a>
+            </div>
         </form>
     </div>
+
     <script src="../js/feedback.js"></script>
+    <script>
+        // Handle URL parameters for messages
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('message')) {
+            const message = urlParams.get('message');
+            if (message === 'signup_success') {
+                showMessage('success', 'Registration successful! Please login with your credentials.');
+            }
+        }
+        if (urlParams.has('error')) {
+            const error = urlParams.get('error');
+            if (error === 'invalid_credentials') {
+                showMessage('error', 'Invalid email or password');
+            }
+        }
+    </script>
 </body>
 </html>

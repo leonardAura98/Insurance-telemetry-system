@@ -4,55 +4,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - Insurance System</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Admin Panel</h2>
-        <ul>
-            <li><a href="admin_dashboard.html">Dashboard</a></li>
-            <li><a href="admin_users.html">Manage Users</a></li>
-            <li><a href="admin_vehicles.html">Manage Vehicles</a></li>
-            <li><a href="admin_premiums.html">Manage Premiums</a></li>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>Admin Panel</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="admin_dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="admin_users.html">Users</a></li>
+            <li><a href="admin_vehicles.html">Vehicles</a></li>
+            <li><a href="admin_premiums.html">Premiums</a></li>
             <li><a href="management_signin.html">Logout</a></li>
         </ul>
-    </div>
+    </nav>
+
     <div class="container">
-        <h2>Admin Dashboard</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 2rem;">
-            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3>Total Users</h3>
-                <p id="total-users">Loading...</p>
+        <div class="admin-grid">
+            <div class="admin-card">
+                <h3>System Overview</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Users</span>
+                        <span class="stat-value" id="total-users">Loading...</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Active Vehicles</span>
+                        <span class="stat-value" id="total-vehicles">Loading...</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Pending Claims</span>
+                        <span class="stat-value" id="pending-claims">Loading...</span>
+                    </div>
+                </div>
             </div>
-            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3>Total Vehicles</h3>
-                <p id="total-vehicles">Loading...</p>
-            </div>
-            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3>Total Premiums</h3>
-                <p id="total-premiums">Loading...</p>
+
+            <div class="admin-card">
+                <h3>Recent Activities</h3>
+                <div class="activity-list" id="recent-activities">
+                    <!-- Activities will be loaded dynamically -->
+                </div>
             </div>
         </div>
     </div>
 
-    <script>// Fetch dashboard statistics
-        fetch('../php/admin.php?action=get_stats')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('total-users').textContent = data.users;
-                document.getElementById('total-vehicles').textContent = data.vehicles;
-                document.getElementById('total-premiums').textContent = data.premiums;
-                
-                // Optionally handle recent activity
-                let activityHtml = '';
-                data.recent_activity.forEach(activity => {
-                    activityHtml += `<li>${activity.description} - ${activity.created_at}</li>`;
-                });
-                document.getElementById('recent-activity').innerHTML = activityHtml;
-            })
-            .catch(error => console.error('Error:', error));
-    </script>
     <script src="../js/feedback.js"></script>
+    <script src="../js/admin.js"></script>
 </body>
 </html>
