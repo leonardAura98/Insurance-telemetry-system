@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File a Claim - Insurance System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <form action="../php/process_claim.php" method="POST" enctype="multipart/form-data" id="claim-form">
+            <h2>File a New Claim</h2>
+            
+            <!-- Vehicle Selection -->
+            <div class="form-group">
+                <label for="vehicle_id">Select Vehicle:</label>
+                <select name="vehicle_id" id="vehicle_id" required>
+                    <option value="">Choose your vehicle</option>
+                    <?php foreach ($vehicles as $vehicle): ?>
+                        <option value="<?php echo $vehicle['id']; ?>">
+                            <?php echo htmlspecialchars($vehicle['registration']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Claim Type -->
+            <div class="form-group">
+                <label for="claim_type">Type of Claim:</label>
+                <select name="claim_type" id="claim_type" required>
+                    <option value="">Select claim type</option>
+                    <option value="accident">Accident</option>
+                    <option value="theft">Theft</option>
+                    <option value="damage">Damage</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <!-- Incident Date -->
+            <div class="form-group">
+                <label for="incident_date">Date of Incident:</label>
+                <input type="date" name="incident_date" id="incident_date" 
+                       max="<?php echo date('Y-m-d'); ?>" required>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description">Claim Description:</label>
+                <textarea name="description" id="description" rows="4" 
+                          placeholder="Please describe what happened..." required></textarea>
+            </div>
+
+            <!-- Amount -->
+            <div class="form-group">
+                <label for="amount">Value of car (KSH):</label>
+                <input type="number" name="amount" id="amount" 
+                       step="0.01" min="0" required>
+            </div>
+
+            <!-- Documents -->
+            <div class="form-group">
+                <label for="documents">Supporting Documents:</label>
+                <input type="file" name="documents[]" id="documents" 
+                       accept=".pdf,.jpg,.jpeg,.png" multiple>
+                <small class="form-text">Upload relevant photos or documents (Max 5MB each)</small>
+            </div>
+
+            <button type="submit">Submit Claim</button>
+        </form>
+    </div>
+
+    <script src="../js/validation.js"></script>
+    <script>
+        // Form validation
+        document.getElementById('claim-form').addEventListener('submit', function(e) {
+            const files = document.getElementById('documents').files;
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            // Check file sizes
+            for (let file of files) {
+                if (file.size > maxSize) {
+                    e.preventDefault();
+                    alert('Files must be less than 5MB each');
+                    return;
+                }
+            }
+
+            // Check incident date
+            const incidentDate = new Date(document.getElementById('incident_date').value);
+            const today = new Date();
+            if (incidentDate > today) {
+                e.preventDefault();
+                alert('Incident date cannot be in the future');
+                return;
+            }
+        });
+    </script>
+
+    <?php include '../includes/footer.php'; ?>
+</body>
+</html>
