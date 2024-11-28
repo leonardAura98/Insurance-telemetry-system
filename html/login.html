@@ -3,61 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Insurance System</title>
+    <title>Log In</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #e9f7ec;
+            --text-color: #ffffff;
+            --background-color: #f5f5f5;
+        }
+
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+        }
+
+        .site-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .site-logo a {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .nav-links a.active {
+            font-weight: bold;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh; /* Adjust height as needed */
+        }
+
+        .site-footer {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
 </head>
 <body>
-    <nav class="top-nav">
-        <div class="nav-brand">
-            <h1>Telemetry Insurance</h1>
-        </div>
-        <ul class="nav-links">
-            <li><a href="landing.html">Home</a></li>
-            <li><a href="signup.html">Sign Up</a></li>
-            <li><a href="login.html" class="active">Login</a></li>
-        </ul>
-    </nav>
+    <header class="site-header">
+        <nav class="site-navigation">
+            <div class="site-logo">
+                <a href="">Telemetry Insurance</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/index.html">Home</a></li>
+                <li><a href="signup.html">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <div class="container">
-        <form action="../php/login.php" method="POST" id="login-form">
-            <h2>Login to Your Account</h2>
-            
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" name="email" id="email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" name="password" id="password" required>
-            </div>
-
-            <button type="submit">Login</button>
-            
-            <div class="form-links">
-                <a href="forgot-password.html">Forgot Password?</a>
-                <span>|</span>
-                <a href="signup.html">Create Account</a>
-            </div>
+        <h2>User Sign In</h2>
+        <form action="../php/auth.php" method="POST">
+            <input type="text" name="usernameOrEmail" placeholder="Username or Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" class="submit">Sign In</button>
         </form>
+        <p class="link">
+            Forgot your password? <a href="forgotpass.html">Reset it</a>
+        </p>
+        <p class="link">
+            Don't have an account? <a href="signup.html">Sign Up</a>
+        </p>
     </div>
 
-    <script src="../js/feedback.js"></script>
-    <script>
-        // Handle URL parameters for messages
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('message')) {
-            const message = urlParams.get('message');
-            if (message === 'signup_success') {
-                showMessage('success', 'Registration successful! Please login with your credentials.');
-            }
-        }
-        if (urlParams.has('error')) {
-            const error = urlParams.get('error');
-            if (error === 'invalid_credentials') {
-                showMessage('error', 'Invalid email or password');
-            }
-        }
-    </script>
+    <footer class="site-footer">
+        <p>&copy; 2023 Telemetry Insurance. All rights reserved.</p>
+    </footer>
 </body>
 </html>

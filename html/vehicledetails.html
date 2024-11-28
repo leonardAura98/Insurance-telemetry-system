@@ -7,158 +7,34 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
+    <nav class="sidebar" id="sidebar">
         <h2><a href="landing.html">Insurance System</a></h2>
         <ul>
             <li><a href="home.html">Dashboard</a></li>
-            <li><a href="vehicledetails.html">Vehicle Details</a></li>
+            <li><a href="vehicledetails.html" class="active">Vehicle Details</a></li>
             <li><a href="driverdetails.html">Driver Details</a></li>
             <li><a href="premiumcalculator.html">Premium Calculator</a></li>
             <li><a href="login.html">Logout</a></li>
         </ul>
-    </div>
+    </nav>
     <div class="container">
         <h2>Vehicle Management</h2>
-
-        <!-- Add New Vehicle Form -->
-        <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <form id="vehicle-form">
             <h3>Add New Vehicle</h3>
-            <form id="vehicle-form" style="max-width: 100%; box-shadow: none; padding: 0;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <input type="text" id="car-reg" placeholder="Vehicle Registration Number" required>
-                    <input type="text" id="car-model" placeholder="Make and Model" required>
-                    <input type="number" id="car-year" placeholder="Manufacturing Year" required>
-                    <select id="car-type" required>
-                        <option value="">Select Vehicle Type</option>
-                        <option value="sedan">Sedan</option>
-                        <option value="suv">SUV</option>
-                        <option value="truck">Truck</option>
-                        <option value="van">Van</option>
-                    </select>
-                </div>
-                <button type="submit" style="margin-top: 1rem;">Add Vehicle</button>
-            </form>
-        </div>
-
-        <!-- Vehicle List -->
-        <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 2rem;">
-            <h3>Your Vehicles</h3>
-            <div style="margin-top: 1rem;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Registration</th>
-                            <th>Make/Model</th>
-                            <th>Year</th>
-                            <th>Type</th>
-                            <th>Insurance Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="vehicle-list">
-                        <!-- Vehicle list will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <input type="text" id="car-reg" placeholder="Vehicle Registration Number" required>
+            <input type="text" id="car-model" placeholder="Make and Model" required>
+            <input type="number" id="car-year" placeholder="Manufacturing Year" required>
+            <select id="car-type" required>
+                <option value="">Select Vehicle Type</option>
+                <option value="sedan">Sedan</option>
+                <option value="suv">SUV</option>
+                <option value="truck">Truck</option>
+                <option value="van">Van</option>
+            </select>
+            <button type="submit">Add Vehicle</button>
+        </form>
+        <div id="vehicle-list">Loading...</div>
     </div>
-
-    <script>
-        // Handle Vehicle Form Submission
-        document.getElementById('vehicle-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('action', 'add_vehicle');
-            formData.append('car_reg', document.getElementById('car-reg').value);
-            formData.append('car_model', document.getElementById('car-model').value);
-            formData.append('car_year', document.getElementById('car-year').value);
-            formData.append('car_type', document.getElementById('car-type').value);
-
-            fetch('../php/vehicle.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(result => {
-                alert('Vehicle added successfully!');
-                this.reset();
-                fetchVehicles();
-            })
-            .catch(error => console.error('Error:', error));
-        });
-
-        // Fetch and display vehicles
-        function fetchVehicles() {
-            fetch('../php/vehicle.php?action=fetch_vehicles')
-                .then(response => response.json())
-                .then(data => {
-                    let vehicleList = '';
-                    data.forEach(vehicle => {
-                        vehicleList += `
-                            <tr>
-                                <td>${vehicle.reg_no}</td>
-                                <td>${vehicle.make_model}</td>
-                                <td>${vehicle.year}</td>
-                                <td>${vehicle.type}</td>
-                                <td>
-                                    <span style="color: ${vehicle.insurance_status === 'active' ? '#4CAF50' : '#f44336'}">
-                                        ${vehicle.insurance_status}
-                                    </span>
-                                </td>
-                                <td>
-                                    <button onclick="editVehicle(${vehicle.id})" 
-                                            style="background: #2196F3; margin-right: 0.5rem;">
-                                        Edit
-                                    </button>
-                                    <button onclick="deleteVehicle(${vehicle.id})" 
-                                            style="background: #f44336;">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    document.getElementById('vehicle-list').innerHTML = vehicleList;
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
-        function editVehicle(vehicleId) {
-            // Implement edit functionality
-            // You could show a modal or redirect to an edit page
-            alert('Edit functionality to be implemented');
-        }
-
-        function deleteVehicle(vehicleId) {
-            if (confirm('Are you sure you want to delete this vehicle?')) {
-                fetch('../php/vehicle.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=delete_vehicle&vehicle_id=${vehicleId}`
-                })
-                .then(response => response.text())
-                .then(result => {
-                    alert(result);
-                    fetchVehicles();
-                })
-                .catch(error => console.error('Error:', error));
-            }
-        }
-
-        // Load vehicles on page load
-        document.addEventListener('DOMContentLoaded', fetchVehicles);
-
-        // Toggle sidebar visibility
-        document.getElementById('sidebar').addEventListener('mouseover', function() {
-            this.style.width = '250px';
-        });
-        document.getElementById('sidebar').addEventListener('mouseout', function() {
-            this.style.width = '60px';
-        });
-    </script>
-    <script src="../js/feedback.js"></script>
+    <script src="../js/vehicle.js"></script>
 </body>
 </html>

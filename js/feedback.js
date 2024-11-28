@@ -1,3 +1,4 @@
+js
 class FeedbackSystem {
     constructor() {
         this.container = this.createContainer();
@@ -31,20 +32,17 @@ class FeedbackSystem {
         const alertDiv = document.createElement('div');
         alertDiv.className = `alert alert-${type}`;
         alertDiv.textContent = message;
-
         this.container.appendChild(alertDiv);
 
         await new Promise(resolve => setTimeout(resolve, duration));
         alertDiv.style.animation = 'slideOut 0.5s ease-in forwards';
         await new Promise(resolve => setTimeout(resolve, 500));
-        
         alertDiv.remove();
         this.processQueue();
     }
 
     handleUrlParams() {
         const urlParams = new URLSearchParams(window.location.search);
-        
         const messageMap = {
             'signup_success': { type: 'success', message: 'Registration successful! Please login' },
             'login_required': { type: 'warning', message: 'Please login to continue' },
@@ -65,9 +63,6 @@ class FeedbackSystem {
     }
 }
 
-// Initialize feedback system
 const feedback = new FeedbackSystem();
 document.addEventListener('DOMContentLoaded', () => feedback.handleUrlParams());
-
-// Export for global use
-window.showMessage = (type, message) => feedback.showMessage(type, message); 
+window.showMessage = (type, message) => feedback.showMessage(type, message);

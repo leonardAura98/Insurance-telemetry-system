@@ -44,4 +44,4 @@ document.addEventListener('DOMContentLoaded', () => {
         const locationService = new LocationService();
         locationButton.addEventListener('click', () => locationService.getLocation());
     }
-}); 
+});

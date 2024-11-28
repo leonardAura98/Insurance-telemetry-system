@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File a Claim - Insurance System</title>
+    <title>File a Claim - Telemetry Insurance</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/validation.js" defer></script>
 </head>
 <body>
-    <div class="container">
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>Telemetry Insurance</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="file-claim.html" class="active">File Claim</a></li>
+            <li><a href="my-claims.html">My Claims</a></li>
+            <li><a href="../php/logout.php">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <h2>File a New Claim</h2>
         <form action="../php/process_claim.php" method="POST" enctype="multipart/form-data" id="claim-form">
-            <h2>File a New Claim</h2>
-            
-            <!-- Vehicle Selection -->
             <div class="form-group">
                 <label for="vehicle_id">Select Vehicle:</label>
                 <select name="vehicle_id" id="vehicle_id" required>
                     <option value="">Choose your vehicle</option>
-                    <?php foreach ($vehicles as $vehicle): ?>
-                        <option value="<?php echo $vehicle['id']; ?>">
-                            <?php echo htmlspecialchars($vehicle['registration']); ?>
-                        </option>
-                    <?php endforeach; ?>
+                    <!-- Dynamic vehicle list will be populated here -->
                 </select>
             </div>
-
-            <!-- Claim Type -->
+            
             <div class="form-group">
                 <label for="claim_type">Type of Claim:</label>
                 <select name="claim_type" id="claim_type" required>
@@ -36,66 +42,64 @@
                 </select>
             </div>
 
-            <!-- Incident Date -->
             <div class="form-group">
                 <label for="incident_date">Date of Incident:</label>
-                <input type="date" name="incident_date" id="incident_date" 
-                       max="<?php echo date('Y-m-d'); ?>" required>
+                <input type="date" name="incident_date" id="incident_date" max="<?php echo date('Y-m-d'); ?>" required>
             </div>
 
-            <!-- Description -->
             <div class="form-group">
-                <label for="description">Claim Description:</label>
-                <textarea name="description" id="description" rows="4" 
-                          placeholder="Please describe what happened..." required></textarea>
+                <label for="description">Description:</label>
+                <textarea name="description" id="description" rows="4" placeholder="Describe the incident" required></textarea>
             </div>
 
-            <!-- Amount -->
             <div class="form-group">
-                <label for="amount">Value of car (KSH):</label>
-                <input type="number" name="amount" id="amount" 
-                       step="0.01" min="0" required>
+                <label for="amount">Claim Amount (Ksh):</label>
+                <input type="number" name="amount" id="amount" min="0" required>
             </div>
 
-            <!-- Documents -->
             <div class="form-group">
                 <label for="documents">Supporting Documents:</label>
-                <input type="file" name="documents[]" id="documents" 
-                       accept=".pdf,.jpg,.jpeg,.png" multiple>
-                <small class="form-text">Upload relevant photos or documents (Max 5MB each)</small>
+                <input type="file" name="documents[]" id="documents" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                <small>Upload relevant photos or documents (Max size: 5MB each)</small>
             </div>
 
             <button type="submit">Submit Claim</button>
         </form>
-    </div>
+    </main>
 
-    <script src="../js/validation.js"></script>
+    <footer class="site-footer">
+        <p>&copy; 2023 Telemetry Insurance. All rights reserved.</p>
+    </footer>
+
     <script>
-        // Form validation
-        document.getElementById('claim-form').addEventListener('submit', function(e) {
-            const files = document.getElementById('documents').files;
-            const maxSize = 5 * 1024 * 1024; // 5MB
-
-            // Check file sizes
-            for (let file of files) {
-                if (file.size > maxSize) {
-                    e.preventDefault();
-                    alert('Files must be less than 5MB each');
-                    return;
+        document.addEventListener('DOMContentLoaded', () => {
+            // Validate form on submission
+            document.getElementById('claim-form').addEventListener('submit', (e) => {
+                const files = document.getElementById('documents').files;
+                const maxFileSize = 5 * 1024 * 1024; // 5MB
+                for (let file of files) {
+                    if (file.size > maxFileSize) {
+                        e.preventDefault();
+                        alert('Each file must be less than 5MB.');
+                        return;
+                    }
                 }
-            }
+            });
 
-            // Check incident date
-            const incidentDate = new Date(document.getElementById('incident_date').value);
-            const today = new Date();
-            if (incidentDate > today) {
-                e.preventDefault();
-                alert('Incident date cannot be in the future');
-                return;
-            }
+            // Example to dynamically load vehicles (fetch from the server)
+            fetch('../php/get_vehicles.php')
+                .then((response) => response.json())
+                .then((data) => {
+                    const vehicleSelect = document.getElementById('vehicle_id');
+                    data.forEach(vehicle => {
+                        const option = document.createElement('option');
+                        option.value = vehicle.id;
+                        option.textContent = `${vehicle.make_model} (${vehicle.registration})`;
+                        vehicleSelect.appendChild(option);
+                    });
+                })
+                .catch((error) => console.error('Error fetching vehicles:', error));
         });
     </script>
-
-    <?php include '../includes/footer.php'; ?>
 </body>
 </html>

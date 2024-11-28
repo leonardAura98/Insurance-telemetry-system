@@ -1,13 +1,35 @@
 <?php
-require 'config.php';
 session_start();
+require_once 'db_connect.php';
 
 if (!isset($_SESSION['user_id'])) {
-    die(json_encode(['error' => 'Unauthorized access']));
+    header('Location: ../html/login.html?error=login_required');
+    exit();
 }
 
-// Fetch premiums
-if ($_GET['action'] === 'fetch_premiums') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    switch ($action) {
+        case 'fetch_premiums':
+            fetchPremiums($conn);
+            break;
+        case 'save_premium':
+            savePremium($conn);
+            break;
+        case 'delete_premium':
+            deletePremium($conn);
+            break;
+        case 'update_premium_status':
+            updatePremiumStatus($conn);
+            break;
+        default:
+            header('Location: ../html/dashboard.html?error=invalid_action');
+            exit();
+    }
+}
+
+function fetchPremiums($conn) {
     $userId = $_SESSION['user_id'];
     $isAdmin = $_SESSION['role'] === 'admin';
     $search = isset($_GET['search']) ? $_GET['search'] : '';
@@ -23,10 +45,10 @@ if ($_GET['action'] === 'fetch_premiums') {
         $query .= " AND v.owner_id = ?";
     }
     if ($search) {
-        $query .= " AND v.reg_no LIKE '%$search%'";
+        $query .= " AND v.reg_no LIKE ?";
     }
     if ($status) {
-        $query .= " AND p.status = '$status'";
+        $query .= " AND p.status = ?";
     }
 
     $stmt = $conn->prepare($query);
@@ -35,21 +57,17 @@ if ($_GET['action'] === 'fetch_premiums') {
     }
     $stmt->execute();
     $result = $stmt->get_result();
-    
     echo json_encode($result->fetch_all(MYSQLI_ASSOC));
 }
 
-// Save premium
-if ($_POST['action'] === 'save_premium') {
+function savePremium($conn) {
     $vehicleId = $_POST['vehicle_id'];
     $amount = $_POST['amount'];
     $userId = $_SESSION['user_id'];
 
-    // Start transaction
     $conn->begin_transaction();
 
     try {
-        // Check if user owns the vehicle or is admin
         if ($_SESSION['role'] !== 'admin') {
             $checkQuery = $conn->prepare("SELECT id FROM vehicles WHERE id = ? AND owner_id = ?");
             $checkQuery->bind_param("ii", $vehicleId, $userId);
@@ -59,13 +77,11 @@ if ($_POST['action'] === 'save_premium') {
             }
         }
 
-        // Insert premium
         $query = $conn->prepare("INSERT INTO premiums (vehicle_id, premium_amount, status, start_date, end_date) 
                                VALUES (?, ?, 'pending', CURDATE(), DATE_ADD(CURDATE(), INTERVAL 1 YEAR))");
         $query->bind_param("id", $vehicleId, $amount);
-        
+
         if ($query->execute()) {
-            // Log activity
             $activityQuery = $conn->prepare("INSERT INTO activity_log (user_id, activity_type, description) VALUES (?, 'premium_add', 'Added new premium')");
             $activityQuery->bind_param("i", $userId);
             $activityQuery->execute();
@@ -81,8 +97,7 @@ if ($_POST['action'] === 'save_premium') {
     }
 }
 
-// Delete premium
-if ($_POST['action'] === 'delete_premium') {
+function deletePremium($conn) {
     if ($_SESSION['role'] !== 'admin') {
         die("Unauthorized action.");
     }
@@ -91,9 +106,8 @@ if ($_POST['action'] === 'delete_premium') {
 
     $query = $conn->prepare("DELETE FROM premiums WHERE id = ?");
     $query->bind_param("i", $premiumId);
-    
+
     if ($query->execute()) {
-        // Log activity
         $activityQuery = $conn->prepare("INSERT INTO activity_log (user_id, activity_type, description) VALUES (?, 'premium_delete', 'Deleted premium record')");
         $activityQuery->bind_param("i", $_SESSION['user_id']);
         $activityQuery->execute();
@@ -104,8 +118,7 @@ if ($_POST['action'] === 'delete_premium') {
     }
 }
 
-// Update premium status
-if ($_POST['action'] === 'update_premium_status') {
+function updatePremiumStatus($conn) {
     if ($_SESSION['role'] !== 'admin') {
         die("Unauthorized action.");
     }
@@ -115,9 +128,8 @@ if ($_POST['action'] === 'update_premium_status') {
 
     $query = $conn->prepare("UPDATE premiums SET status = ? WHERE id = ?");
     $query->bind_param("si", $status, $premiumId);
-    
+
     if ($query->execute()) {
-        // Log activity
         $activityQuery = $conn->prepare("INSERT INTO activity_log (user_id, activity_type, description) VALUES (?, 'premium_update', 'Updated premium status')");
         $activityQuery->bind_param("i", $_SESSION['user_id']);
         $activityQuery->execute();

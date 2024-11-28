@@ -1,8 +1,8 @@
 <?php
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'insurance_system';
+$host = DB_HOST;
+$username = DB_USER;
+$password = DB_PASS;
+$database = DB_NAME;
 
 $conn = new mysqli($host, $username, $password, $database);
 
@@ -12,4 +12,4 @@ if ($conn->connect_error) {
 }
 
 $conn->set_charset("utf8mb4");
-?> 
+?>

@@ -10,93 +10,41 @@
     <div class="sidebar" id="sidebar">
         <h2><a href="landing.html">Insurance System</a></h2>
         <ul>
-            <li><a href="home.html">Dashboard</a></li>
+            <li><a href="home.html" class="active">Dashboard</a></li>
             <li><a href="vehicledetails.html">Vehicle Details</a></li>
             <li><a href="driverdetails.html">Driver Details</a></li>
             <li><a href="premiumcalculator.html">Premium Calculator</a></li>
-            <li><a href="login">Logout</a></li>
+            <li><a href="login.html">Logout</a></li>
         </ul>
     </div>
     <div class="container">
         <h2>Welcome to Your Dashboard</h2>
-        
-        <!-- Quick Stats Section -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 2rem 0;">
-            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3>Your Vehicles</h3>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard-stats">
+            <div>
+                <h3>Vehicles</h3>
                 <p id="vehicle-count">Loading...</p>
             </div>
-            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <div>
                 <h3>Active Premiums</h3>
-                <p id="premium-count">Loading...</p>
+                <p id="active-premiums">Loading...</p>
             </div>
-            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3>Next Payment</h3>
-                <p id="next-payment">Loading...</p>
+            <div>
+                <h3>Recent Claims</h3>
+                <p id="recent-claims">Loading...</p>
             </div>
         </div>
 
         <!-- Quick Actions -->
-        <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="quick-actions">
             <h3>Quick Actions</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
-                <a href="vehicledetails.html" style="text-decoration: none;">
-                    <div style="background: #4CAF50; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
-                        Add New Vehicle
-                    </div>
-                </a>
-                <a href="premiumcalculator.html" style="text-decoration: none;">
-                    <div style="background: #2196F3; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
-                        Calculate Premium
-                    </div>
-                </a>
-                <a href="driverdetails.html" style="text-decoration: none;">
-                    <div style="background: #FF9800; color: white; padding: 1rem; border-radius: 4px; text-align: center;">
-                        Update Profile
-                    </div>
-                </a>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 2rem;">
-            <h3>Recent Activity</h3>
-            <div id="recent-activity" style="margin-top: 1rem;">
-                Loading activities...
-            </div>
+            <a href="vehicledetails.html">Add Vehicle</a>
+            <a href="premiumcalculator.html">Calculate Premium</a>
+            <a href="driverdetails.html">Update Profile</a>
         </div>
     </div>
 
-    <script>
-        // Fetch user dashboard data
-        fetch('../php/user.php?action=get_dashboard_stats')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('vehicle-count').textContent = data.vehicles + ' Registered';
-                document.getElementById('premium-count').textContent = data.premiums + ' Active';
-                document.getElementById('next-payment').textContent = data.next_payment;
-                
-                // Update recent activity
-                let activityHtml = '<ul style="list-style: none;">';
-                data.recent_activity.forEach(activity => {
-                    activityHtml += `<li style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                        ${activity.description}
-                        <span style="float: right; color: #666;">${activity.date}</span>
-                    </li>`;
-                });
-                activityHtml += '</ul>';
-                document.getElementById('recent-activity').innerHTML = activityHtml;
-            })
-            .catch(error => console.error('Error:', error));
-
-        // Toggle sidebar visibility
-        document.getElementById('sidebar').addEventListener('mouseover', function() {
-            this.style.width = '250px';
-        });
-        document.getElementById('sidebar').addEventListener('mouseout', function() {
-            this.style.width = '60px';
-        });
-    </script>
-    <script src="../js/feedback.js"></script>
+    <script src="../js/scripts.js"></script>
 </body>
 </html>

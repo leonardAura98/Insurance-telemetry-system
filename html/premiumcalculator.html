@@ -13,7 +13,7 @@
             <li><a href="home.html">Dashboard</a></li>
             <li><a href="vehicledetails.html">Vehicle Details</a></li>
             <li><a href="driverdetails.html">Driver Details</a></li>
-            <li><a href="premiumcalculator.html">Premium Calculator</a></li>
+            <li><a href="premiumcalculator.html" class="active">Premium Calculator</a></li>
             <li><a href="login.html">Logout</a></li>
         </ul>
     </div>
@@ -21,106 +21,35 @@
         <h2>Premium Calculator</h2>
 
         <!-- Calculator Form -->
-        <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            <form id="premium-form" style="max-width: 100%; box-shadow: none; padding: 0;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div>
-                        <label>Vehicle Value (Ksh)</label>
-                        <input type="number" id="car-value" required min="0">
-                    </div>
-                    <div>
-                        <label>Vehicle Age (Years)</label>
-                        <input type="number" id="car-age" required min="0">
-                    </div>
-                    <div>
-                        <label>Risk Exposure (%)</label>
-                        <input type="number" id="risk" required min="0" max="100">
-                    </div>
-                    <div>
-                        <label>Coverage Type</label>
-                        <select id="coverage-type" required>
-                            <option value="comprehensive">Comprehensive</option>
-                            <option value="third-party">Third Party</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" style="margin-top: 1rem;">Calculate Premium</button>
+        <div class="form-container">
+            <form id="premium-form">
+                <label for="car-value">Vehicle Value (Ksh):</label>
+                <input type="number" id="car-value" placeholder="Enter vehicle value" required>
+
+                <label for="car-age">Vehicle Age (Years):</label>
+                <input type="number" id="car-age" placeholder="Enter vehicle age" required>
+
+                <label for="risk">Risk Exposure (%):</label>
+                <input type="number" id="risk" placeholder="Enter risk percentage" required>
+
+                <label for="coverage-type">Coverage Type:</label>
+                <select id="coverage-type" required>
+                    <option value="comprehensive">Comprehensive</option>
+                    <option value="third-party">Third Party</option>
+                </select>
+
+                <button type="submit" class="submit">Calculate Premium</button>
             </form>
         </div>
 
         <!-- Result Display -->
-        <div id="result-container" style="display: none; background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 2rem;">
-            <h3>Premium Calculation Result</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
-                <div>
-                    <strong>Base Premium:</strong>
-                    <p id="base-premium">Ksh 0</p>
-                </div>
-                <div>
-                    <strong>Risk Factor:</strong>
-                    <p id="risk-factor">0%</p>
-                </div>
-                <div>
-                    <strong>Age Adjustment:</strong>
-                    <p id="age-adjustment">Ksh 0</p>
-                </div>
-                <div>
-                    <strong>Total Premium:</strong>
-                    <p id="total-premium" style="color: #4CAF50; font-size: 1.2em;">Ksh 0</p>
-                </div>
-            </div>
-            <button onclick="savePremium()" style="margin-top: 1rem; background: #2196F3;">Save Quote</button>
+        <div id="result-container" class="result-container">
+            <h3>Calculation Result</h3>
+            <p id="premium-result"></p>
         </div>
     </div>
 
-    <script>
-        document.getElementById('premium-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const carValue = parseFloat(document.getElementById('car-value').value);
-            const carAge = parseInt(document.getElementById('car-age').value);
-            const risk = parseFloat(document.getElementById('risk').value);
-            const coverageType = document.getElementById('coverage-type').value;
-
-            // Calculate premium
-            const basePremium = carValue * 0.05;
-            const riskFactor = risk / 100;
-            const ageAdjustment = carAge * 1000;
-            const totalPremium = (basePremium + (basePremium * riskFactor) + ageAdjustment) * 
-                               (coverageType === 'comprehensive' ? 1.5 : 1);
-
-            // Display results
-            document.getElementById('base-premium').textContent = `Ksh ${basePremium.toFixed(2)}`;
-            document.getElementById('risk-factor').textContent = `${risk}%`;
-            document.getElementById('age-adjustment').textContent = `Ksh ${ageAdjustment.toFixed(2)}`;
-            document.getElementById('total-premium').textContent = `Ksh ${totalPremium.toFixed(2)}`;
-            document.getElementById('result-container').style.display = 'block';
-        });
-
-        function savePremium() {
-            const totalPremium = document.getElementById('total-premium').textContent;
-            fetch('../php/premium.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `action=save_premium&amount=${totalPremium}`
-            })
-            .then(response => response.text())
-            .then(result => {
-                alert('Premium quote saved successfully!');
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        // Toggle sidebar visibility
-        document.getElementById('sidebar').addEventListener('mouseover', function() {
-            this.style.width = '250px';
-        });
-        document.getElementById('sidebar').addEventListener('mouseout', function() {
-            this.style.width = '60px';
-        });
-    </script>
-    <script src="../js/feedback.js"></script>
+    <script src="../js/validation.js"></script>
+    <script src="../js/scripts.js"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+php
 <?php
 session_start();
 require_once 'db_connect.php';
@@ -9,9 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         case 'add_vehicle':
             handleAddVehicle($conn);
             break;
-        case 'update_vehicle':
-            handleUpdateVehicle($conn);
-            break;
         case 'delete_vehicle':
             handleDeleteVehicle($conn);
             break;
@@ -22,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 function handleAddVehicle($conn) {
-    // Validate user is logged in
     if (!isset($_SESSION['user_id'])) {
         header('Location: ../html/login.html?error=login_required');
         exit();
@@ -37,7 +34,7 @@ function handleAddVehicle($conn) {
     try {
         $stmt = $conn->prepare("INSERT INTO vehicles (user_id, make, model, year, registration) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("issis", $user_id, $make, $model, $year, $registration);
-        
+
         if ($stmt->execute()) {
             header('Location: ../html/dashboard.html?status=vehicle_added');
         } else {
@@ -49,11 +46,20 @@ function handleAddVehicle($conn) {
     }
 }
 
-function handleUpdateVehicle($conn) {
-    // Implementation for updating vehicle details
-}
-
 function handleDeleteVehicle($conn) {
-    // Implementation for deleting vehicle
+    if ($_SESSION['role'] !== 'admin') {
+        die("Unauthorized action.");
+    }
+
+    $vehicleId = filter_input(INPUT_POST, 'vehicle_id', FILTER_VALIDATE_INT);
+
+    $stmt = $conn->prepare("DELETE FROM vehicles WHERE id = ?");
+    $stmt->bind_param("i", $vehicleId);
+
+    if ($stmt->execute()) {
+        echo "Vehicle deleted successfully.";
+    } else {
+        echo "Error deleting vehicle.";
+    }
 }
 ?>

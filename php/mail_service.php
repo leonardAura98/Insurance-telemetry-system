@@ -10,20 +10,20 @@ function sendResetEmail($email, $token) {
     try {
         // Server settings
         $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';  // Change to your SMTP host
+        $mail->Host       = EMAIL_HOST;
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'your-email@gmail.com';  // Change to your email
-        $mail->Password   = 'your-app-password';     // Change to your app password
+        $mail->Username   = EMAIL_USER;
+        $mail->Password   = EMAIL_PASS;
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        $mail->Port       = EMAIL_PORT;
 
         // Recipients
-        $mail->setFrom('your-email@gmail.com', 'Insurance System');
+        $mail->setFrom(EMAIL_USER, EMAIL_NAME);
         $mail->addAddress($email);
 
         // Content
         $reset_link = "http://yourwebsite.com/reset-password.php?token=" . $token;
-        
+
         $mail->isHTML(true);
         $mail->Subject = 'Password Reset Request';
         $mail->Body    = "
@@ -41,4 +41,4 @@ function sendResetEmail($email, $token) {
         return false;
     }
 }
-?> 
+?>

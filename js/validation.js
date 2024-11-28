@@ -16,17 +16,16 @@ class FormValidator {
         // Password validation
         const password = this.form.querySelector('input[name="password"]');
         const confirmPassword = this.form.querySelector('input[name="confirm_password"]');
-        
         if (password && confirmPassword) {
             if (password.value !== confirmPassword.value) {
                 e.preventDefault();
-                feedback.showMessage('error', 'Passwords do not match');
+                alert('Passwords do not match');
                 isValid = false;
             }
 
             if (password.value.length < 8) {
                 e.preventDefault();
-                feedback.showMessage('error', 'Password must be at least 8 characters');
+                alert('Password must be at least 8 characters');
                 isValid = false;
             }
         }
@@ -36,10 +35,10 @@ class FormValidator {
         if (fileInput && fileInput.files.length > 0) {
             const file = fileInput.files[0];
             const maxSize = 5 * 1024 * 1024; // 5MB
-            
+
             if (file.size > maxSize) {
                 e.preventDefault();
-                feedback.showMessage('error', 'File size must be less than 5MB');
+                alert('File size must be less than 5MB');
                 isValid = false;
             }
         }
@@ -48,8 +47,8 @@ class FormValidator {
     }
 }
 
-// Initialize form validation
+// Initialize form validations
 document.addEventListener('DOMContentLoaded', () => {
     new FormValidator('signup-form');
     new FormValidator('claim-form');
-}); 
+});

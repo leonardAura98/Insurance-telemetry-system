@@ -15,22 +15,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $amount = filter_input(INPUT_POST, 'amount', FILTER_VALIDATE_FLOAT);
     $incident_date = filter_input(INPUT_POST, 'incident_date', FILTER_SANITIZE_STRING);
 
-    // Start transaction
     $conn->begin_transaction();
 
     try {
-        // Insert claim
         $stmt = $conn->prepare("INSERT INTO claims (user_id, vehicle_id, claim_type, description, amount, incident_date) 
                                VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("iissds", $user_id, $vehicle_id, $claim_type, $description, $amount, $incident_date);
-        
+
         if (!$stmt->execute()) {
             throw new Exception("Error inserting claim");
         }
 
         $claim_id = $conn->insert_id;
 
-        // Handle document uploads
         if (isset($_FILES['documents'])) {
             $upload_dir = '../uploads/claims/';
             if (!file_exists($upload_dir)) {
@@ -42,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $file_path = $upload_dir . $file_name;
 
                 if (move_uploaded_file($tmp_name, $file_path)) {
-                    // Store document reference in database
                     $doc_stmt = $conn->prepare("INSERT INTO claim_documents (claim_id, file_path) VALUES (?, ?)");
                     $doc_stmt->bind_param("is", $claim_id, $file_path);
                     $doc_stmt->execute();
@@ -50,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Log activity
         $log_stmt = $conn->prepare("INSERT INTO activity_log (user_id, activity_type, description) 
                                    VALUES (?, 'claim_submitted', ?)");
         $log_description = "Submitted claim for " . $claim_type . " - Amount: " . $amount;
@@ -68,4 +63,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 }
-?> 
+?>

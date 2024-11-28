@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>Telemetry Insurance System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
         :root {
@@ -66,12 +65,53 @@
             font-weight: bold;
         }
 
-        .signup-container {
+        .site-main {
+            flex: 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 80vh; /* Adjust height as needed */
+        }
+
+        .hero-section {
+            background-color: var(--secondary-color);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .centered-box {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-outline-primary {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: var(--text-color);
         }
 
         .site-footer {
@@ -89,33 +129,33 @@
                 <a href="index.html">Telemetry Insurance</a>
             </div>
             <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
     </header>
 
     <main class="site-main">
-        <div class="signup-container">
-            <h2>Create an Account</h2>
-            <form action="../php/auth.php" method="POST" enctype="multipart/form-data">
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <input type="text" name="id_number" placeholder="ID Number" required>
-                <input type="text" name="area_operation" placeholder="Area of Operation" required>
-                <label for="id_photo">Upload ID Photo:</label>
-                <input type="file" name="id_photo" accept="image/*" required>
-                <button type="submit" class="submit">Sign Up</button>
-            </form>
-            <p class="link">
-                Already have an account? <a href="login.html">Login</a>
-            </p>
-        </div>
+        <section class="hero-section">
+            <div class="container">
+                <div class="centered-box animate__animated animate__fadeInUp">
+                    <h1>Revolutionizing Vehicle Insurance</h1>
+                    <p>Real-time data and dynamic premiums for the modern driver</p>
+                    <div class="action-buttons">
+                        <a href="html/signup.html" class="btn btn-primary">Get Started</a>
+                        <a href="html/login.html" class="btn btn-outline-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer class="site-footer">
-        <p>&copy; 2023 Telemetry Insurance. All rights reserved.</p>
+        <div class="container">
+            <p>&copy; 2023 Telemetry Insurance. All rights reserved.</p>
+        </div>
     </footer>
 </body>
 </html>
