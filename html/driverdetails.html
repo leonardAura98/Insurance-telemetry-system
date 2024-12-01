@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Details - Insurance System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <h2><a href="landing.html">Insurance System</a></h2>
+        <ul>
+            <li><a href="home.html">Dashboard</a></li>
+            <li><a href="vehicledetails.html">Vehicle Details</a></li>
+            <li><a href="driverdetails.html" class="active">Driver Details</a></li>
+            <li><a href="premiumcalculator.html">Premium Calculator</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h2>Driver Details</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>License Number</th>
+                    <th>Experience (Years)</th>
+                    <th>Violations</th>
+                </tr>
+            </thead>
+            <tbody id="driver-list">
+                <!-- Driver details will be dynamically loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Fetch driver details
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('../php/fetch_drivers.php')
+                .then(response => response.json())
+                .then(data => {
+                    let driverHTML = '';
+                    data.forEach(driver => {
+                        driverHTML += `
+                            <tr>
+                                <td>${driver.name}</td>
+                                <td>${driver.license_number}</td>
+                                <td>${driver.experience}</td>
+                                <td>${driver.violations}</td>
+                            </tr>
+                        `;
+                    });
+                    document.getElementById('driver-list').innerHTML = driverHTML;
+                })
+                .catch(error => console.error('Error fetching driver details:', error));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #e9f7ec;
+            --text-color: #ffffff;
+            --background-color: #f5f5f5;
+        }
+
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+        }
+
+        .site-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .site-logo a {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .nav-links a.active {
+            font-weight: bold;
+        }
+
+        .signup-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh; /* Adjust height as needed */
+        }
+
+        .site-footer {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="site-navigation">
+            <div class="site-logo">
+                <a href="index.html">Telemetry Insurance</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="site-main">
+        <div class="signup-container">
+            <h2>Create an Account</h2>
+            <form id="signup-form" action="/xampp/htdocs/telemetry/php/auth.php" method="POST" enctype="multipart/form-data">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <input type="text" name="id_number" placeholder="ID Number" required>
+                <input type="text" name="area_operation" placeholder="Area of Operation" required>
+                <label for="id_photo">Upload ID Photo:</label>
+                <input type="file" name="id_photo" accept="image/*" required>
+                <button type="submit" class="submit">Sign Up</button>
+            </form>
+            <p class="link">
+                Already have an account? <a href="login.html">Login</a>
+            </p>
+        </div>
+    </main>
+    <script>
+        // Add form submission debugging
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Log form data for debugging
+            console.log('Submitting form...');
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+            
+            // Use the correct URL path
+            fetch('/telemetry/php/auth.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.text();
+            })
+            .then(data => {
+                console.log('Server response:', data);
+                if (data.includes('success')) {
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Registration failed: ' + data);
+                }
+            })
+            .catch(error => {
+                console.error('Detailed error:', error);
+                alert('Registration error: ' + error.message);
+            });
+        });
+        </script>
+
+    <footer class="site-footer">
+        <p>&copy; 2023 Telemetry Insurance. All rights reserved.</p>
+    </footer>
+</body>
+</html>

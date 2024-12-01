@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Insurance System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <h2><a href="landing.html">Insurance System</a></h2>
+        <ul>
+            <li><a href="home.html" class="active">Dashboard</a></li>
+            <li><a href="vehicledetails.html">Vehicle Details</a></li>
+            <li><a href="driverdetails.html">Driver Details</a></li>
+            <li><a href="premiumcalculator.html">Premium Calculator</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h2>Welcome to Your Dashboard</h2>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard-stats">
+            <div>
+                <h3>Vehicles</h3>
+                <p id="vehicle-count">Loading...</p>
+            </div>
+            <div>
+                <h3>Active Premiums</h3>
+                <p id="active-premiums">Loading...</p>
+            </div>
+            <div>
+                <h3>Recent Claims</h3>
+                <p id="recent-claims">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <a href="vehicledetails.html">Add Vehicle</a>
+            <a href="premiumcalculator.html">Calculate Premium</a>
+            <a href="driverdetails.html">Update Profile</a>
+        </div>
+    </div>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>

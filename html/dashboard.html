@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Telemetry Insurance</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="../js/scripts.js" defer></script>
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>Telemetry Insurance</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="file-claim.html">File Claim</a></li>
+            <li><a href="my-claims.html">My Claims</a></li>
+            <li><a href="landing.html">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <h2>Welcome to Your Dashboard</h2>
+        <section class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Your Vehicles</h3>
+                <p id="vehicle-count">Loading...</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Policies</h3>
+                <p id="policy-count">Loading...</p>
+            </div>
+            <div class="stat-card">
+                <h3>Pending Claims</h3>
+                <p id="claim-count">Loading...</p>
+            </div>
+        </section>
+        
+        <section class="recent-activities">
+            <h3>Recent Activities</h3>
+            <ul id="activity-list">
+                <li>Loading recent activities...</li>
+            </ul>
+        </section>
+        
+        <section class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="actions">
+                <a href="file-claim.html" class="action-btn">File a New Claim</a>
+                <a href="premiumcalculator.html" class="action-btn">Calculate Premium</a>
+                <a href="update-profile.html" class="action-btn">Update Profile</a>
+            </div>
+        </section>
+    </main>
+
+    <script src="../js/feedback.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html> 

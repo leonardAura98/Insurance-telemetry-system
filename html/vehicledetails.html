@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Details - Insurance System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <h2><a href="landing.html">Insurance System</a></h2>
+        <ul>
+            <li><a href="home.html">Dashboard</a></li>
+            <li><a href="vehicledetails.html" class="active">Vehicle Details</a></li>
+            <li><a href="driverdetails.html">Driver Details</a></li>
+            <li><a href="premiumcalculator.html">Premium Calculator</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <h2>Vehicle Management</h2>
+        <form id="vehicle-form">
+            <h3>Add New Vehicle</h3>
+            <input type="text" id="car-reg" placeholder="Vehicle Registration Number" required>
+            <input type="text" id="car-model" placeholder="Make and Model" required>
+            <input type="number" id="car-year" placeholder="Manufacturing Year" required>
+            <select id="car-type" required>
+                <option value="">Select Vehicle Type</option>
+                <option value="sedan">Sedan</option>
+                <option value="suv">SUV</option>
+                <option value="truck">Truck</option>
+                <option value="van">Van</option>
+            </select>
+            <button type="submit">Add Vehicle</button>
+        </form>
+        <div id="vehicle-list">Loading...</div>
+    </div>
+    <script src="../js/vehicle.js"></script>
+</body>
+</html>

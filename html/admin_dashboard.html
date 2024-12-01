@@ -1,0 +1,56 @@
+<!-- sign-up/html/admin_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Insurance System</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>Admin Panel</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="admin_dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="admin_users.html">Users</a></li>
+            <li><a href="admin_vehicles.html">Vehicles</a></li>
+            <li><a href="admin_premiums.html">Premiums</a></li>
+            <li><a href="login.html">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="admin-grid">
+            <div class="admin-card">
+                <h3>System Overview</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Users</span>
+                        <span class="stat-value" id="total-users">Loading...</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Active Vehicles</span>
+                        <span class="stat-value" id="total-vehicles">Loading...</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Pending Claims</span>
+                        <span class="stat-value" id="pending-claims">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h3>Recent Activities</h3>
+                <div class="activity-list" id="recent-activities">
+                    <!-- Activities will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/feedback.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/admin.js"></script>
+</html>

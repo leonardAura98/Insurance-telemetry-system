@@ -1,0 +1,159 @@
+hi<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telemetry Insurance System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #28a745;
+            --secondary-color: #e9f7ec;
+            --text-color: #ffffff;
+            --background-color: #f5f5f5;
+        }
+
+        /* Global Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background-color: var(--background-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            padding: 10px 0;
+        }
+
+        .site-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .site-logo a {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .nav-links a.active {
+            font-weight: bold;
+        }
+
+        .site-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-section {
+            background-color: var(--secondary-color);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .centered-box {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-outline-primary {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .site-footer {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="site-navigation">
+            <div class="site-logo">
+                <a href="index.html">Telemetry Insurance</a>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="html/logout.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="site-main">
+        <section class="hero-section">
+            <div class="container">
+                <div class="centered-box animate__animated animate__fadeInUp">
+                    <h1>Revolutionizing Vehicle Insurance</h1>
+                    <p>Real-time data and dynamic premiums for the modern driver</p>
+                    <div class="action-buttons">
+                        <a href="html/signup.html" class="btn btn-primary">Get Started</a>
+                        <a href="html/login.html" class="btn btn-outline-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2024 Telemetry Insurance. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

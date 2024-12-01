@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Claims - Telemetry Insurance</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <h1>Telemetry Insurance</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="file-claim.html">File Claim</a></li>
+            <li><a href="my-claims.html" class="active">My Claims</a></li>
+            <li><a href="../php/logout.php">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <h2>My Claims</h2>
+
+        <!-- Claims Table -->
+        <div class="claims-container">
+            <table class="claims-table">
+                <thead>
+                    <tr>
+                        <th>Claim ID</th>
+                        <th>Vehicle</th>
+                        <th>Claim Type</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Amount (Ksh)</th>
+                    </tr>
+                </thead>
+                <tbody id="claims-list">
+                    <!-- Claims data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2023 Telemetry Insurance. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Fetch user claims on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const claimsList = document.getElementById('claims-list');
+            claimsList.innerHTML = '<tr><td colspan="6">Loading claims...</td></tr>';
+
+            fetch('../php/get_claims.php?action=get_user_claims')
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.length === 0) {
+                        claimsList.innerHTML = '<tr><td colspan="6">No claims found.</td></tr>';
+                        return;
+                    }
+
+                    let claimsHtml = '';
+                    data.forEach((claim) => {
+                        claimsHtml += `
+                            <tr>
+                                <td>${claim.id}</td>
+                                <td>${claim.vehicle}</td>
+                                <td>${claim.type}</td>
+                                <td>${claim.date}</td>
+                                <td><span class="status-${claim.status.toLowerCase()}">${claim.status}</span></td>
+                                <td>${claim.amount.toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                    claimsList.innerHTML = claimsHtml;
+                })
+                .catch((error) => {
+                    console.error('Error fetching claims:', error);
+                    claimsList.innerHTML = '<tr><td colspan="6">Error loading claims. Please try again later.</td></tr>';
+                });
+        });
+    </script>
+</body>
+</html>
